@@ -19,9 +19,10 @@ namespace MouseTest
         private static Button red = new Button(90, 1, 10, 4, "Red");
         private static Button green = new Button(101, 1, 10, 4, "Green");
         private static Button blue = new Button(112, 1, 10, 4, "Blue");
-        private static Button back = new Button(0, 0, Console.BufferWidth - 1, 10, "");
+        private static Button back = new Button(0, 0, Console.BufferWidth - 1, 8, "");
         private static int width = Console.BufferWidth;
         private static int height = Console.BufferHeight;
+        private static ConsoleColor colour = ConsoleColor.White;
 
         private static void Main(string[] args)
         {
@@ -77,7 +78,7 @@ namespace MouseTest
             clear.Draw(width);
             MyConsole.SetCursorPosition(0, 12);
             Bitmap bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\nedladdning (3).png", true);
-            int iconSize = 48;
+            int iconSize = 64;
             ConsoleWriteImage(bmpSrc, iconSize);
 
             MyConsole.SetCursorPosition(0, MyConsole.CursorTop + 5);
@@ -99,10 +100,11 @@ namespace MouseTest
             bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\MonoGameLogoOnly_128px.png", true);
             ConsoleWriteImage(bmpSrc, iconSize);
             MyConsole.SetCursorPosition(0, MyConsole.CursorTop + 5);
-            bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\MonoGameLogoOnly_128px.png", true);
+            bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\Icons\img_colormap.gif", true);
             ConsoleWriteImage(bmpSrc, iconSize);
             int lastInput = int.MaxValue;
-            ConsoleColor colour = ConsoleColor.White;
+            DrawColor();
+
             Console.SetCursorPosition(0, 0);
             while (true)
             {
@@ -155,6 +157,7 @@ namespace MouseTest
                                         white.Draw(width);
                                         reDraw.Draw(width);
                                         clear.Draw(width);
+                                        DrawColor();
                                     }
                                     else if (reDraw.Clicked(x, y))
                                     {
@@ -163,18 +166,22 @@ namespace MouseTest
                                     else if (white.Clicked(x, y))
                                     {
                                         colour = ConsoleColor.White;
+                                        DrawColor();
                                     }
                                     else if (red.Clicked(x, y))
                                     {
                                         colour = ConsoleColor.Red;
+                                        DrawColor();
                                     }
                                     else if (green.Clicked(x, y))
                                     {
                                         colour = ConsoleColor.Green;
+                                        DrawColor();
                                     }
                                     else if (blue.Clicked(x, y))
                                     {
                                         colour = ConsoleColor.Blue;
+                                        DrawColor();
                                     }
                                 }
                             }
@@ -203,6 +210,19 @@ namespace MouseTest
             }
         }
 
+        private static void DrawColor()
+        {
+            ConsoleColor temp = Console.ForegroundColor;
+            Console.ForegroundColor = colour;
+            MyConsole.SetCursorPosition(125, 2);
+            MyConsole.Write("██████");
+            MyConsole.SetCursorPosition(125, 3);
+            MyConsole.Write("██████");
+            MyConsole.SetCursorPosition(125, 4);
+            MyConsole.Write("██████");
+            Console.ForegroundColor = temp;
+        }
+
         private static void ReDraw()
         {
             MyConsole.ReDraw();
@@ -214,8 +234,10 @@ namespace MouseTest
             green.Draw(width);
             red.Draw(width);
             white.Draw(width);
+            blue.Draw(width);
             reDraw.Draw(width);
             clear.Draw(width);
+            DrawColor();
         }
 
         private static int Clamp(int value, int min, int max) // Clamps a value between a min and a max.
@@ -518,6 +540,7 @@ namespace MouseTest
                 {
                     everyThing[position[1]] = ReplaceAt(everyThing[position[1]], position[0], c);
                     everythingForeColour[position[1]] = ReplaceAt(everythingForeColour[position[1]], position[0], Console.ForegroundColor);
+                    everythingBackColour[position[1]] = ReplaceAt(everythingBackColour[position[1]], position[0], Console.BackgroundColor);
                     position[0]++;
                 }
                 position[1]++;
@@ -573,6 +596,27 @@ namespace MouseTest
                         everythingForeColour[position[1]].Add(ConsoleColor.White);
                     }
                 }
+
+                if (everythingBackColour.Count < 1)
+                {
+                    everythingBackColour.Add(new List<ConsoleColor>());
+                }
+
+                if (position[1] > everythingBackColour.Count - 1)
+                {
+                    int temp = everythingBackColour.Count - 1;
+                    for (int i = temp; i < position[1]; i++)
+                    {
+                        everythingBackColour.Add(new List<ConsoleColor>());
+                    }
+                }
+                if (position[0] > 0 && everythingBackColour[position[1]].Count - 1 < position[0])
+                {
+                    for (int i = everythingBackColour[position[1]].Count; i < position[0]; i++)
+                    {
+                        everythingBackColour[position[1]].Add(ConsoleColor.Black);
+                    }
+                }
             }
 
             private static void UpdateCursor(int offset)
@@ -626,6 +670,34 @@ namespace MouseTest
                         everythingForeColour[position[1]].Add(ConsoleColor.White);
                     }
                 }
+
+                if (everythingBackColour.Count < 1)
+                {
+                    everythingBackColour.Add(new List<ConsoleColor>());
+                }
+
+                if (position[1] > everythingBackColour.Count - 1)
+                {
+                    int temp = everythingBackColour.Count - 1;
+                    for (int i = temp; i < position[1]; i++)
+                    {
+                        everythingBackColour.Add(new List<ConsoleColor>());
+                    }
+                }
+                if (position[0] > 0 && everythingBackColour[position[1]].Count - 1 < position[0])
+                {
+                    for (int i = everythingBackColour[position[1]].Count; i < position[0]; i++)
+                    {
+                        everythingBackColour[position[1]].Add(ConsoleColor.Black);
+                    }
+                }
+                if (everythingBackColour[position[1]].Count < offset + position[0])
+                {
+                    for (int i = everythingBackColour[position[1]].Count; i < position[0] + offset; i++)
+                    {
+                        everythingBackColour[position[1]].Add(ConsoleColor.Black);
+                    }
+                }
             }
 
             public static void Write(string str)
@@ -635,6 +707,8 @@ namespace MouseTest
                 foreach (char c in str)
                 {
                     everyThing[position[1]] = ReplaceAt(everyThing[position[1]], position[0], c);
+                    everythingForeColour[position[1]] = ReplaceAt(everythingForeColour[position[1]], position[0], Console.ForegroundColor);
+                    everythingBackColour[position[1]] = ReplaceAt(everythingBackColour[position[1]], position[0], Console.BackgroundColor);
                     position[0]++;
                 }
                 //UpdateCursor();
@@ -642,13 +716,15 @@ namespace MouseTest
 
             public static void Write(char c)
             {
-                UpdateCursor();
-                if (everyThing[position[1]].Length < 1 + position[0])
-                {
-                    everyThing[position[1]] = everyThing[position[1]].PadRight(position[0] + 1);
-                }
+                UpdateCursor(1);
+                //if (everyThing[position[1]].Length < 1 + position[0])
+                //{
+                //    everyThing[position[1]] = everyThing[position[1]].PadRight(position[0] + 1);
+                //}
                 RealWrite(c.ToString());
                 everyThing[position[1]] = ReplaceAt(everyThing[position[1]], position[0], c);
+                everythingForeColour[position[1]] = ReplaceAt(everythingForeColour[position[1]], position[0], Console.ForegroundColor);
+                everythingBackColour[position[1]] = ReplaceAt(everythingBackColour[position[1]], position[0], Console.BackgroundColor);
                 position[0]++;
                 //UpdateCursor();
             }
@@ -665,39 +741,57 @@ namespace MouseTest
                 Console.Clear();
                 int x = Console.CursorLeft;
                 int y = Console.CursorTop;
-                string sendString = string.Empty;
+                //string sendString = string.Empty;
                 for (int i = 0; i < everyThing.Count; i++)
                 {
                     if (everyThing[i].Trim() != string.Empty)
                     {
-                        //Console.SetCursorPosition(0, i);
-                        //if (everyThing[i].Length > Console.BufferWidth)
-                        //{
-                        //    everyThing[i] = everyThing[i].Remove(everyThing[i].Length - Console.BufferWidth);
-                        //}
-                        //Console.Write(everyThing[i]);
+                        Console.SetCursorPosition(0, i);
                         if (everyThing[i].Length > Console.BufferWidth)
                         {
                             //Console.WriteLine(everyThing[i].Remove(Console.BufferWidth));
-                            sendString += everyThing[i].Remove(Console.BufferWidth);
+                            string str = everyThing[i].Remove(Console.BufferWidth);
+                            for (int a = 0; a < str.Length; a++)
+                            {
+                                Console.BackgroundColor = everythingBackColour[i][a];
+                                Console.ForegroundColor = everythingForeColour[i][a];
+                                Console.Write(str[a]);
+                            }
+                            //sendString += everyThing[i].Remove(Console.BufferWidth);
                         }
                         else if (everyThing[i].Length + 1 > Console.BufferWidth)
                         {
-                            sendString += everyThing[i];
+                            //sendString += everyThing[i];
+                            string str = everyThing[i];
+                            for (int a = 0; a < str.Length; a++)
+                            {
+                                Console.BackgroundColor = everythingBackColour[i][a];
+                                Console.ForegroundColor = everythingForeColour[i][a];
+                                Console.Write(str[a]);
+                            }
                         }
                         else
                         {
                             //Console.Write(everyThing[i]);
-                            sendString += everyThing[i] + "\n";
+                            //sendString += everyThing[i] + "\n";
+                            string str = everyThing[i];
+                            for (int a = 0; a < str.Length; a++)
+                            {
+                                Console.BackgroundColor = everythingBackColour[i][a];
+                                Console.ForegroundColor = everythingForeColour[i][a];
+                                Console.Write(str[a]);
+                            }
                         }
                     }
                     else
                     {
-                        sendString += "\n";
+                        //Console.WriteLine();
+                        //sendString += "\n";
                     }
                 }
                 Console.SetCursorPosition(0, 0);
-                Console.Write(sendString);
+                //Console.Write(sendString);
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.SetCursorPosition(x, y);
             }
 
@@ -742,6 +836,7 @@ namespace MouseTest
             {
                 everyThing.Clear();
                 everythingForeColour.Clear();
+                everythingBackColour.Clear();
                 position = new int[2];
                 Console.Clear();
             }
