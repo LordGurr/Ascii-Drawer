@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Linq;
+using System.IO;
 
 namespace MouseTest
 {
@@ -31,7 +32,7 @@ namespace MouseTest
             files,
         };
 
-        private static State currentState = State.drawing;
+        private static State currentState = State.files;
 
         private static void Main(string[] args)
         {
@@ -77,45 +78,94 @@ namespace MouseTest
             };
             Console.CursorVisible = false;
             timeForUpdate.Start();
-
-            back.Draw(width);
-            green.Draw(width);
-            blue.Draw(width);
-            red.Draw(width);
-            white.Draw(width);
-            reDraw.Draw(width);
-            clear.Draw(width);
-            MyConsole.SetCursorPosition(0, 12);
-            Bitmap bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\nedladdning (3).png", true);
             int iconSize = 48;
-            ConsoleWriteImage(bmpSrc, iconSize);
+            if (currentState == State.drawing)
+            {
+                back.Draw(width);
+                green.Draw(width);
+                blue.Draw(width);
+                red.Draw(width);
+                white.Draw(width);
+                reDraw.Draw(width);
+                clear.Draw(width);
 
-            MyConsole.SetCursorPosition(0, MyConsole.CursorTop + 5);
-            bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\nedladdning (3).jfif", true);
-            ConsoleWriteImage(bmpSrc, iconSize);
-            MyConsole.SetCursorPosition(0, MyConsole.CursorTop + 5);
-            bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\Logo.png", true);
-            ConsoleWriteImage(bmpSrc, iconSize);
-            MyConsole.SetCursorPosition(0, MyConsole.CursorTop + 5);
-            bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\GBStudioLogoCropped.ico", true);
-            ConsoleWriteImage(bmpSrc, iconSize);
-            MyConsole.SetCursorPosition(0, MyConsole.CursorTop + 5);
-            bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\Lbs croppped.png", true);
-            ConsoleWriteImage(bmpSrc, iconSize);
-            MyConsole.SetCursorPosition(0, MyConsole.CursorTop + 5);
-            bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\darkcalc.ico", true);
-            ConsoleWriteImage(bmpSrc, iconSize);
-            MyConsole.SetCursorPosition(0, MyConsole.CursorTop + 5);
-            bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\MonoGameLogoOnly_128px.png", true);
-            ConsoleWriteImage(bmpSrc, iconSize);
-            MyConsole.SetCursorPosition(0, MyConsole.CursorTop + 5);
-            bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\Icons\img_colormap.gif", true);
-            ClickableImage image = new ClickableImage(0, MyConsole.CursorTop, iconSize + 10, iconSize / 2 + 10, "ColorWheel", bmpSrc, iconSize);
-            image.Setup(width);
-            image.Draw(width);
-            //ConsoleWriteImage(bmpSrc, iconSize);
+                MyConsole.SetCursorPosition(0, 12);
+                Bitmap bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\nedladdning (3).png", true);
+                ConsoleWriteImage(bmpSrc, iconSize);
+
+                MyConsole.SetCursorPosition(0, MyConsole.CursorTop + 5);
+                bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\nedladdning (3).jfif", true);
+                ConsoleWriteImage(bmpSrc, iconSize);
+                MyConsole.SetCursorPosition(0, MyConsole.CursorTop + 5);
+                bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\Logo.png", true);
+                ConsoleWriteImage(bmpSrc, iconSize);
+                MyConsole.SetCursorPosition(0, MyConsole.CursorTop + 5);
+                bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\GBStudioLogoCropped.ico", true);
+                ConsoleWriteImage(bmpSrc, iconSize);
+                MyConsole.SetCursorPosition(0, MyConsole.CursorTop + 5);
+                bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\Lbs croppped.png", true);
+                ConsoleWriteImage(bmpSrc, iconSize);
+                MyConsole.SetCursorPosition(0, MyConsole.CursorTop + 5);
+                bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\darkcalc.ico", true);
+                ConsoleWriteImage(bmpSrc, iconSize);
+                MyConsole.SetCursorPosition(0, MyConsole.CursorTop + 5);
+                bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\MonoGameLogoOnly_128px.png", true);
+                ConsoleWriteImage(bmpSrc, iconSize);
+                MyConsole.SetCursorPosition(0, MyConsole.CursorTop + 5);
+                bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\Icons\img_colormap.gif", true);
+                ClickableImage image = new ClickableImage(0, MyConsole.CursorTop, (int)(iconSize * 1.09), iconSize / 2 + 10, "ColorWheel", bmpSrc, iconSize);
+                image.Setup(width);
+                image.Draw(width);
+                //ConsoleWriteImage(bmpSrc, iconSize);
+                DrawColor(width);
+            }
+            else if (currentState == State.files)
+            {
+                MyConsole.SetCursorPosition(0, 10);
+                string folder = @"C:\Users\gustav.juul\Pictures";
+                string[] files = Directory.GetDirectories(folder); // Directory.GetFiles(folder)
+                files = Directory.GetFiles(folder).Concat(files).ToArray();
+                int xOffset = 0;
+                int yOffset = 10;
+                int highestImage = 0;
+                for (int i = 0; i < files.Length; i++)
+                {
+                    //MyConsole.SetCursorPosition(0, MyConsole.CursorTop + 5);
+                    Bitmap bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\Icons\Unknown.png", true);
+                    //Bitmap bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\folderIcon.png", true);
+                    try
+                    {
+                        bmpSrc = new Bitmap(files[i], true);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e.Message);
+                        if (Directory.Exists(files[i]))
+                        {
+                            bmpSrc = new Bitmap(@"C:\Users\gustav.juul\Pictures\folderIcon.png", true);
+                        }
+                        //continue;
+                    }
+                    int backslash = files[i].LastIndexOf(@"\") + 1;
+                    int length = files[i].Length - backslash;//files[i].LastIndexOf('.') - backslash;
+                    if (xOffset + iconSize + 2 > Console.BufferWidth || xOffset + length > Console.BufferWidth)
+                    {
+                        xOffset = 0;
+                        yOffset += highestImage + 5;
+                        highestImage = 0;
+                    }
+                    int start = yOffset;
+                    ClickableImage image = new ClickableImage(xOffset, yOffset, iconSize + 2, iconSize / 2 + 10, files[i].Substring(backslash, length > 0 ? length : files[i].Length - backslash), bmpSrc, iconSize);
+                    image.Setup(width);
+                    image.Draw(width);
+                    if (Console.CursorTop - start > highestImage)
+                    {
+                        highestImage = Console.CursorTop - start;
+                    }
+                    xOffset += image.width + 6;
+                }
+            }
             int lastInput = int.MaxValue;
-            DrawColor(width);
             Console.SetCursorPosition(0, 0);
             while (true)
             {
@@ -126,12 +176,15 @@ namespace MouseTest
                     case NativeMethods.MOUSE_EVENT:
                         {
                             timeForUpdate.Restart();
-                            MyConsole.WriteLine("Mouse event");
-                            MyConsole.WriteLine(string.Format("│    X ...............:   {0,4:0}  ", record.MouseEvent.dwMousePosition.X));
-                            MyConsole.WriteLine(string.Format("│    Y ...............:   {0,4:0}  ", record.MouseEvent.dwMousePosition.Y));
-                            MyConsole.WriteLine(string.Format("│    dwButtonState ...: 0x{0:X4}  ", record.MouseEvent.dwButtonState));
-                            MyConsole.WriteLine(string.Format("│    dwControlKeyState: 0x{0:X4}  ", record.MouseEvent.dwControlKeyState));
-                            MyConsole.WriteLine(string.Format("│    dwEventFlags ....: 0x{0:X4}  ", record.MouseEvent.dwEventFlags));
+                            if (currentState == State.drawing)
+                            {
+                                MyConsole.WriteLine("Mouse event");
+                                MyConsole.WriteLine(string.Format("│    X ...............:   {0,4:0}  ", record.MouseEvent.dwMousePosition.X));
+                                MyConsole.WriteLine(string.Format("│    Y ...............:   {0,4:0}  ", record.MouseEvent.dwMousePosition.Y));
+                                MyConsole.WriteLine(string.Format("│    dwButtonState ...: 0x{0:X4}  ", record.MouseEvent.dwButtonState));
+                                MyConsole.WriteLine(string.Format("│    dwControlKeyState: 0x{0:X4}  ", record.MouseEvent.dwControlKeyState));
+                                MyConsole.WriteLine(string.Format("│    dwEventFlags ....: 0x{0:X4}  ", record.MouseEvent.dwEventFlags));
+                            }
                             //if (x >= 0 && y >= 0)
                             //{
                             //    MyConsole.SetCursorPosition(x, y);
@@ -199,7 +252,10 @@ namespace MouseTest
                                 }
                             }
                             MyConsole.SetCursorPosition(0, 7);
-                            MyConsole.WriteLine("│    updateTime: " + timeForUpdate.Elapsed.TotalMilliseconds);
+                            if (currentState == State.drawing)
+                            {
+                                MyConsole.WriteLine("│    updateTime: " + timeForUpdate.Elapsed.TotalMilliseconds);
+                            }
                             lastInput = record.MouseEvent.dwButtonState;
                         }
                         break;
@@ -245,15 +301,18 @@ namespace MouseTest
             width = Console.BufferWidth;
             height = Console.BufferHeight;
             //back.Remove();
-            back.width = width - 1;
-            back.Draw(width);
-            green.Draw(width);
-            red.Draw(width);
-            white.Draw(width);
-            blue.Draw(width);
-            reDraw.Draw(width);
-            clear.Draw(width);
-            DrawColor(width);
+            if (currentState == State.drawing)
+            {
+                back.width = width - 1;
+                back.Draw(width);
+                green.Draw(width);
+                red.Draw(width);
+                white.Draw(width);
+                blue.Draw(width);
+                reDraw.Draw(width);
+                clear.Draw(width);
+                DrawColor(width);
+            }
         }
 
         private static int Clamp(int value, int min, int max) // Clamps a value between a min and a max.
@@ -498,11 +557,11 @@ namespace MouseTest
 
         private class Button
         {
-            protected int x;
-            protected int y;
+            public int x { get; protected set; }
+            public int y { get; protected set; }
             public int width;
-            protected int height;
-            protected string text;
+            public int height { get; protected set; }
+            public string text { get; protected set; }
 
             public Button(int _x, int _y, int _width, int _height, string _text)
             {
@@ -561,18 +620,29 @@ namespace MouseTest
                     {
                         maxSize = width;
                     }
+
                     MyConsole.SetCursorPosition(0, y + 2);
                     ConsoleWriteImage(image, maxSize, x + 1);
-                    imageWidth = MyConsole.GetLine(0, MyConsole.CursorTop - 1).Length;
-                    if (screenWidth > x + width / 2 - text.Length / 2)
+                    imageWidth = MyConsole.GetLine(x, MyConsole.CursorTop - 1).Length;
+
+                    if (text.Length >= width)
                     {
-                        MyConsole.SetCursorPosition(x + width / 2 - text.Length / 2, MyConsole.CursorTop + 2);
-                        MyConsole.Write(text);
+                        width = text.Length + 2;
                     }
+                    MyConsole.SetCursorPosition(x + width / 2 - text.Length / 2, MyConsole.CursorTop + 2);
+                    if (MyConsole.CursorLeft < x)
+                    {
+                        MyConsole.SetCursorPosition(x, MyConsole.CursorTop);
+                    }
+                    MyConsole.Write(text);
                     if (MyConsole.CursorTop + 2 < y + height)
                     {
                         height = MyConsole.CursorTop + 2 - y;
                     }
+                    //if (MyConsole.CursorLeft - x > width)
+                    //{
+                    //    width = MyConsole.CursorLeft + 2 - x;
+                    //}
                     //Box(x, y, x + width, y + height, 2, " ");
                 }
             }
@@ -583,7 +653,7 @@ namespace MouseTest
                 {
                     Box(x, y, x + width, y + height, 2, " ");
                     MyConsole.SetCursorPosition(x + width / 2 + imageWidth / 2, y + 2);
-                    ConsoleWriteImage(image, maxSize, x + width / 2 - imageWidth / 2);
+                    ConsoleWriteImage(image, maxSize, (int)Math.Round(x + (double)width / (double)2 - (double)imageWidth / (double)2, MidpointRounding.AwayFromZero));
                     if (screenWidth > x + width / 2 - text.Length / 2)
                     {
                         MyConsole.SetCursorPosition(x + width / 2 - text.Length / 2, MyConsole.CursorTop + 2);
@@ -962,6 +1032,7 @@ namespace MouseTest
 
             public static string GetLine(int x, int y)
             {
+                UpdateCursor();
                 return everyThing[y].Substring(x);
             }
         }
