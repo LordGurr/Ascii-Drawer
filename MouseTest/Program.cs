@@ -122,11 +122,11 @@ namespace MouseTest
             else if (currentState == State.files)
             {
                 MyConsole.SetCursorPosition(0, 10);
-                string folder = @"C:\Users\gustav.juul\Pictures";
+                string folder = @"C:\Users\gustav.juul\source\repos\SpaceShooter\SpaceShooter\Content"; // C:\Users\gustav.juul\source\repos\SpaceShooter\SpaceShooter\Content. C:\Users\gustav.juul\Pictures"
                 string[] files = Directory.GetDirectories(folder); // Directory.GetFiles(folder)
-                files = Directory.GetFiles(folder).Concat(files).ToArray();
-                int xOffset = 0;
-                int yOffset = 10;
+                files = files.Concat(Directory.GetFiles(folder)).ToArray();
+                int xOffset = 5;
+                int yOffset = 5;
                 int highestImage = 0;
                 for (int i = 0; i < files.Length; i++)
                 {
@@ -150,7 +150,7 @@ namespace MouseTest
                     int length = files[i].Length - backslash;//files[i].LastIndexOf('.') - backslash;
                     if (xOffset + iconSize + 2 > Console.BufferWidth || xOffset + length > Console.BufferWidth)
                     {
-                        xOffset = 0;
+                        xOffset = 5;
                         yOffset += highestImage + 5;
                         highestImage = 0;
                     }
@@ -295,6 +295,9 @@ namespace MouseTest
             }
         }
 
+        /// <summary>
+        /// Redraws the screen.
+        /// </summary>
         private static void ReDraw()
         {
             MyConsole.ReDraw();
@@ -315,7 +318,10 @@ namespace MouseTest
             }
         }
 
-        private static int Clamp(int value, int min, int max) // Clamps a value between a min and a max.
+        /// <summary>
+        /// Clamps a value between a min and a max.
+        /// </summary>
+        private static int Clamp(int value, int min, int max)
         {
             return value < min ? min : value > max ? max : value;
         }
@@ -356,6 +362,9 @@ namespace MouseTest
             MyConsole.Write(rList[bestHit[2] - 1]);
         }
 
+        /// <summary>
+        /// Writes a image in Console.
+        /// </summary>
         public static void ConsoleWriteImage(Bitmap source, int sMax)
         {
             sMax /= 2;
@@ -374,6 +383,9 @@ namespace MouseTest
             Console.ResetColor();
         }
 
+        /// <summary>
+        /// Writes a image in Console with a set x starting position.
+        /// </summary>
         public static void ConsoleWriteImage(Bitmap source, int sMax, int xPos)
         {
             MyConsole.SetCursorPosition(xPos, MyConsole.CursorTop);
