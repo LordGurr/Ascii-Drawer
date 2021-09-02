@@ -1,5 +1,4 @@
 ﻿//jmedved.com
-
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
